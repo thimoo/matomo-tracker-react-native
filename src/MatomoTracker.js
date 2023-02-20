@@ -1,23 +1,31 @@
 class MatomoTracker {
   constructor(userOptions) {
     if (!userOptions.urlBase) {
-      throw new Error('urlBase is required for Matomo tracking.');
+      throw new Error("urlBase is required for Matomo tracking.");
     }
     if (!userOptions.siteId) {
-      throw new Error('siteId is required for Matomo tracking.');
+      throw new Error("siteId is required for Matomo tracking.");
     }
 
     this.initialize(userOptions);
   }
 
-  initialize({ urlBase, trackerUrl, siteId, userId, disabled = false, log = false }) {
-    const normalizedUrlBase = urlBase[urlBase.length - 1] !== '/' ? `${urlBase}/` : urlBase;
+  initialize({
+    urlBase,
+    trackerUrl,
+    siteId,
+    userId,
+    disabled = false,
+    log = false,
+  }) {
+    const normalizedUrlBase =
+      urlBase[urlBase.length - 1] !== "/" ? `${urlBase}/` : urlBase;
 
     this.disabled = disabled;
     this.log = log;
 
     if (disabled) {
-      log && console.log('Matomo tracking is disabled.');
+      log && console.log("Matomo tracking is disabled.");
 
       return;
     }
@@ -30,10 +38,10 @@ class MatomoTracker {
     }
 
     log &&
-      console.log('Matomo tracking is enabled for:', {
+      console.log("Matomo tracking is enabled for:", {
         trackerUrl: this.trackerUrl,
         siteId: this.siteId,
-        userId: this.userId
+        userId: this.userId,
       });
   }
 
@@ -44,7 +52,7 @@ class MatomoTracker {
    * {Object} `userInfo` - Optional data used for tracking different user info, see https://developer.matomo.org/api-reference/tracking-api#optional-user-info.
    */
   trackAppStart({ userInfo = {} } = {}) {
-    return this.trackAction({ name: 'App / start', userInfo });
+    return this.trackAction({ name: "App / start", userInfo });
   }
 
   /**
@@ -56,7 +64,7 @@ class MatomoTracker {
    * {Object} `userInfo` - Optional data used for tracking different user info, see https://developer.matomo.org/api-reference/tracking-api#optional-user-info.
    */
   trackScreenView({ name, userInfo = {} }) {
-    if (!name) throw new Error('Error: name is required.');
+    if (!name) throw new Error("Error: name is required.");
 
     return this.trackAction({ name: `Screen / ${name}`, userInfo });
   }
@@ -72,7 +80,7 @@ class MatomoTracker {
    * {Object} `userInfo` - Optional data used for tracking different user info, see https://developer.matomo.org/api-reference/tracking-api#optional-user-info.
    */
   trackAction({ name, userInfo = {} }) {
-    if (!name) throw new Error('Error: name is required.');
+    if (!name) throw new Error("Error: name is required.");
 
     return this.track({ action_name: name, ...userInfo });
   }
@@ -94,10 +102,44 @@ class MatomoTracker {
    * {Object} `userInfo` - Optional data used for tracking different user info, see https://developer.matomo.org/api-reference/tracking-api#optional-user-info.
    */
   trackEvent({ category, action, name, value, userInfo = {} }) {
-    if (!category) throw new Error('Error: category is required.');
-    if (!action) throw new Error('Error: action is required.');
+    if (!category) throw new Error("Error: category is required.");
+    if (!action) throw new Error("Error: action is required.");
 
-    return this.track({ e_c: category, e_a: action, e_n: name, e_v: value, ...userInfo });
+    return this.track({
+      e_c: category,
+      e_a: action,
+      e_n: name,
+      e_v: value,
+      ...userInfo,
+    });
+  }
+
+  /**
+   * Tracks custom content
+   *
+   * Doc: https://developer.matomo.org/api-reference/tracking-api#optional-content-trackinghttpsmatomoorgdocscontent-tracking-info
+   *
+   * @param {Object} data -
+   * {String} `name` - The content name. (eg. 'Ad Foo Bar', ...)
+   *
+   * {String} `piece` - The actual content piece. (eg. the path to an image, video, audio, any text)
+   *
+   * {String} `target` - The target of the content. (eg. the URL of a landing page.)
+   *
+   * {String} `interaction` - The name of the interaction with the content. (eg. 'click')
+   *
+   * {Object} `userInfo` - Optional data used for tracking different user info, see https://developer.matomo.org/api-reference/tracking-api#optional-user-info.
+   */
+  trackContent({ name, piece, target, interaction, userInfo = {} }) {
+    if (!name) throw new Error("Error: name is required.");
+
+    return this.track({
+      c_n: name,
+      c_p: piece,
+      c_t: target,
+      c_i: interaction,
+      ...userInfo,
+    });
   }
 
   /**
@@ -115,9 +157,14 @@ class MatomoTracker {
    * {Object} `userInfo` - Optional data used for tracking different user info, see https://developer.matomo.org/api-reference/tracking-api#optional-user-info.
    */
   trackSiteSearch({ keyword, category, count, userInfo = {} }) {
-    if (!keyword) throw new Error('Error: keyword is required.');
+    if (!keyword) throw new Error("Error: keyword is required.");
 
-    return this.track({ search: keyword, search_cat: category, search_count: count, ...userInfo });
+    return this.track({
+      search: keyword,
+      search_cat: category,
+      search_count: count,
+      ...userInfo,
+    });
   }
 
   /**
@@ -131,7 +178,7 @@ class MatomoTracker {
    * {Object} `userInfo` - Optional data used for tracking different user info, see https://developer.matomo.org/api-reference/tracking-api#optional-user-info.
    */
   trackLink({ link, userInfo = {} }) {
-    if (!link) throw new Error('Error: link is required.');
+    if (!link) throw new Error("Error: link is required.");
 
     return this.track({ link, url: link, ...userInfo });
   }
@@ -147,7 +194,7 @@ class MatomoTracker {
    * {Object} `userInfo` - Optional data used for tracking different user info, see https://developer.matomo.org/api-reference/tracking-api#optional-user-info.
    */
   trackDownload({ download, userInfo = {} }) {
-    if (!download) throw new Error('Error: download is required.');
+    if (!download) throw new Error("Error: download is required.");
 
     return this.track({ download, url: download, ...userInfo });
   }
@@ -165,11 +212,11 @@ class MatomoTracker {
     delete data.lang;
 
     const fetchObj = {
-      method: 'POST',
+      method: "POST",
       headers: {
-        Accept: 'application/json',
-        'Accept-Language': lang,
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        Accept: "application/json",
+        "Accept-Language": lang,
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
       },
       body: new URLSearchParams({
         idsite: this.siteId,
@@ -177,8 +224,8 @@ class MatomoTracker {
         apiv: 1,
         uid: this.userId,
         send_image: 0,
-        ...data
-      }).toString()
+        ...data,
+      }).toString(),
     };
 
     return fetch(this.trackerUrl, fetchObj)
@@ -187,14 +234,20 @@ class MatomoTracker {
           throw Error(response.statusText);
         }
 
-        this.log && console.log('Matomo tracking is sent:', this.trackerUrl, fetchObj);
+        this.log &&
+          console.log("Matomo tracking is sent:", this.trackerUrl, fetchObj);
 
         return response;
       })
       .catch((error) => {
-        this.log && console.log('Matomo tracking is not sent:', this.trackerUrl, fetchObj);
+        this.log &&
+          console.log(
+            "Matomo tracking is not sent:",
+            this.trackerUrl,
+            fetchObj
+          );
 
-        console.warn('Matomo tracking error:', error);
+        console.warn("Matomo tracking error:", error);
 
         return error;
       });
