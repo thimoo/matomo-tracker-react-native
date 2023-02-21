@@ -225,6 +225,7 @@ class MatomoTracker {
         apiv: 1,
         uid: this.userId,
         send_image: 0,
+        debug: 1,
         ...data,
       }).toString(),
     };
