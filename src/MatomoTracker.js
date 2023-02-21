@@ -235,7 +235,7 @@ class MatomoTracker {
         }
 
         this.log &&
-          console.log("Matomo tracking is sent:", this.trackerUrl, fetchObj);
+          console.log("Matomo tracking is sent:", this.trackerUrl, fetchObj, response);
 
         return response;
       })
