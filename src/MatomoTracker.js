@@ -134,6 +134,7 @@ class MatomoTracker {
     if (!name) throw new Error("Error: name is required.");
 
     return this.track({
+      action_name: name,
       c_n: name,
       c_p: piece,
       c_t: target,
@@ -235,7 +236,12 @@ class MatomoTracker {
         }
 
         this.log &&
-          console.log("Matomo tracking is sent:", this.trackerUrl, fetchObj, response);
+          console.log(
+            "Matomo tracking is sent:",
+            this.trackerUrl,
+            fetchObj,
+            response
+          );
 
         return response;
       })
