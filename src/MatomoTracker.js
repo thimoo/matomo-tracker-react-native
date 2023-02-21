@@ -135,6 +135,7 @@ class MatomoTracker {
 
     return this.track({
       action_name: name,
+      url: name,
       c_n: name,
       c_p: piece,
       c_t: target,
